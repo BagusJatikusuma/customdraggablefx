@@ -32,7 +32,10 @@ public class DragIcon extends AnchorPane {
 
     public DragIconType getType() { return mType;}
 
-    //set type of DragonIconType property
+    /**
+     * set type of DragonIconType property
+     * @param type
+     */
     public void setType(DragIconType type) {
         mType = type;
 

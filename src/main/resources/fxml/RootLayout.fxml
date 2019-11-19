@@ -9,9 +9,9 @@
    <children>
       <SplitPane fx:id="base_pane" dividerPositions="0.35346358792184723" prefHeight="480.0" prefWidth="640.0">
          <items>
-            <ScrollPane prefHeight="200.0" prefWidth="200.0">
+            <ScrollPane prefHeight="478.0" prefWidth="83.0">
                <content>
-                  <VBox fx:id="left_pane" prefHeight="323.0" prefWidth="189.0" />
+                  <VBox fx:id="left_pane" prefHeight="323.0" prefWidth="83.0" />
                </content>
             </ScrollPane>
             <AnchorPane fx:id="right_pane" prefHeight="200.0" prefWidth="200.0" />
