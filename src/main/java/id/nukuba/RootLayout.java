@@ -98,15 +98,17 @@ public class RootLayout extends AnchorPane {
 
         mIconDragDropped = (EventHandler<DragEvent>) event -> {
 
+            DragContainer container =
+                    (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
+
+            container.addData("scene_coords",
+                    new Point2D(event.getSceneX(), event.getSceneY()));
+
+            ClipboardContent content = new ClipboardContent();
+            content.put(DragContainer.AddNode, container);
+
+            event.getDragboard().setContent(content);
             event.setDropCompleted(true);
-
-            right_pane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRightPane);
-            right_pane.removeEventHandler(DragEvent.DRAG_DROPPED, mIconDragDropped);
-            base_pane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRoot);
-
-            mDragOverIcon.setVisible(false);
-
-            event.consume();
         };
 
         this.setOnDragDone( event -> {
@@ -120,7 +122,21 @@ public class RootLayout extends AnchorPane {
             DragContainer container =
                     (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
 
-            System.out.println (container.getData().toString());
+            if (container != null) {
+                if (container.getValue("scene_coords") != null) {
+
+                    DragIcon droppedIcon = new DragIcon();
+
+                    droppedIcon.setType(DragIconType.valueOf(container.getValue("type")));
+                    right_pane.getChildren().add(droppedIcon);
+
+                    Point2D cursorPoint = container.getValue("scene_coords");
+
+                    droppedIcon.relocateToPoint(
+                            new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32)
+                    );
+                }
+            }
 
             event.consume();
         });

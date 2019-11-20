@@ -17,18 +17,18 @@ public class DragContainer implements Serializable {
     public static final DataFormat AddNode =
             new DataFormat("application.DragIcon.add");
 
-    private final List<Pair<String, String> > mDataPairs = new ArrayList<>();
+    private final List<Pair<String, Object> > mDataPairs = new ArrayList<>();
 
     public DragContainer () {
     }
 
-    public void addData (String key, String value) {
-        mDataPairs.add(new Pair<String, String>(key, value));
+    public void addData (String key, Object value) {
+        mDataPairs.add(new Pair<String, Object>(key, value));
     }
 
     public <T> T getValue (String key) {
 
-        for (Pair<String, String> data: mDataPairs) {
+        for (Pair<String, Object> data: mDataPairs) {
 
             if (data.getKey().equals(key))
                 return (T) data.getValue();
@@ -38,5 +38,5 @@ public class DragContainer implements Serializable {
         return null;
     }
 
-    public List <Pair<String, String> > getData () { return mDataPairs; }
+    public List <Pair<String, Object> > getData () { return mDataPairs; }
 }
