@@ -2,6 +2,7 @@ package id.nukuba;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
@@ -76,4 +77,16 @@ public class DragIcon extends AnchorPane {
         }
     }
 
+    public void relocateToPoint(Point2D point2D) {
+
+        Point2D localCoords = getParent().sceneToLocal(point2D);
+
+        relocate (
+                (int) (localCoords.getX() -
+                        (getBoundsInLocal().getWidth() / 2)),
+                (int) (localCoords.getY() -
+                        (getBoundsInLocal().getHeight() / 2))
+        );
+
+    }
 }
