@@ -110,13 +110,17 @@ public class RootLayout extends AnchorPane {
         };
 
         this.setOnDragDone( event -> {
-            System.out.println ((String) event.getDragboard().getContent(DataFormat.PLAIN_TEXT));
 
             right_pane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRightPane);
             right_pane.removeEventHandler(DragEvent.DRAG_DROPPED, mIconDragDropped);
             base_pane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRoot);
 
             mDragOverIcon.setVisible(false);
+
+            DragContainer container =
+                    (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
+
+            System.out.println (container.getData().toString());
 
             event.consume();
         });
@@ -140,7 +144,10 @@ public class RootLayout extends AnchorPane {
             mDragOverIcon.relocateToPoint(new Point2D(event.getSceneX(), event.getSceneY()));
 
             ClipboardContent content = new ClipboardContent();
-            content.putString(icn.getType().toString());
+            DragContainer container = new DragContainer();
+
+            container.addData ("type", mDragOverIcon.getType().toString());
+            content.put(DragContainer.AddNode, container);
 
             mDragOverIcon.startDragAndDrop (TransferMode.ANY).setContent(content);
             mDragOverIcon.setVisible(true);
