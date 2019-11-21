@@ -125,14 +125,16 @@ public class RootLayout extends AnchorPane {
             if (container != null) {
                 if (container.getValue("scene_coords") != null) {
 
-                    DragIcon droppedIcon = new DragIcon();
+                    DraggableNode node = new DraggableNode();
 
-                    droppedIcon.setType(DragIconType.valueOf(container.getValue("type")));
-                    right_pane.getChildren().add(droppedIcon);
+                    System.out.println((String) container.getValue("type"));
+
+                    node.setType(DragIconType.valueOf(container.getValue("type")));
+                    right_pane.getChildren().add(node);
 
                     Point2D cursorPoint = container.getValue("scene_coords");
 
-                    droppedIcon.relocateToPoint(
+                    node.relocateToPoint(
                             new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32)
                     );
                 }
