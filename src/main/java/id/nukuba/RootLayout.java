@@ -140,6 +140,14 @@ public class RootLayout extends AnchorPane {
                 }
             }
 
+            container =
+                    (DragContainer) event.getDragboard().getContent(DragContainer.DragNode);
+
+            if (container != null) {
+                if (container.getValue("type") != null)
+                    System.out.println ("Moved node " + container.getValue("type"));
+            }
+
             event.consume();
         });
 
