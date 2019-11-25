@@ -18,6 +18,8 @@ public class DragContainer implements Serializable {
             new DataFormat("application.DragIcon.add");
     public static final DataFormat DragNode =
             new DataFormat("application.DraggableNode.drag");
+    public static final DataFormat AddLink =
+            new DataFormat("application.NodeLink.add");
 
     private final List<Pair<String, Object> > mDataPairs = new ArrayList<>();
 

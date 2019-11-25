@@ -27,6 +27,14 @@ public class DraggableNode extends AnchorPane {
     @FXML private Label title_bar;
     @FXML private Label close_button;
 
+    @FXML AnchorPane left_link_handle;
+    @FXML AnchorPane right_link_handle;
+
+    private EventHandler <MouseEvent> mLinkHandleDragDetected;
+    private EventHandler <DragEvent> mLinkHandleDragDropped;
+    private EventHandler <DragEvent> mContextLinkDragOver;
+    private EventHandler <DragEvent> mContextLinkDragDropped;
+
     private final DraggableNode self;
 
     public DraggableNode() {
@@ -48,7 +56,16 @@ public class DraggableNode extends AnchorPane {
 
     @FXML
     private void initialize() {
+
         buildNodeDragHandlers();
+        buildLinkDragHandlers();
+
+        left_link_handle.setOnDragDetected(mLinkHandleDragDetected);
+        right_link_handle.setOnDragDetected(mLinkHandleDragDetected);
+
+        left_link_handle.setOnDragDropped(mLinkHandleDragDropped);
+        right_link_handle.setOnDragDropped(mLinkHandleDragDropped);
+
     }
 
     private void buildNodeDragHandlers() {
@@ -162,6 +179,83 @@ public class DraggableNode extends AnchorPane {
         }
     }
 
+    private void buildLinkDragHandlers() {
 
+        mLinkHandleDragDetected = event -> {
+
+            getParent().setOnDragOver(null);
+            getParent().setOnDragDropped(null);
+
+            getParent().setOnDragOver(mContextLinkDragOver);
+            getParent().setOnDragDropped(mLinkHandleDragDropped);
+
+            //Drag content code
+            ClipboardContent content = new ClipboardContent();
+            DragContainer container = new DragContainer ();
+
+            AnchorPane link_handle = (AnchorPane) event.getSource();
+            DraggableNode parent = (DraggableNode) link_handle.getParent().getParent().getParent();
+
+            container.addData("source", parent.getType().toString());
+
+            content.put(DragContainer.AddLink, container);
+
+            parent.startDragAndDrop (TransferMode.ANY).setContent(content);
+
+            event.consume();
+        };
+
+        mLinkHandleDragDropped = event -> {
+            getParent().setOnDragOver(null);
+            getParent().setOnDragDropped(null);
+
+            //get the drag data.  If it's null, abort.
+            //This isn't the drag event we're looking for.
+            DragContainer container =
+                    (DragContainer) event.getDragboard().getContent(DragContainer.AddLink);
+
+            if ( container == null ) {
+                System.out.println( "container is null" );
+                return;
+            }
+
+            AnchorPane link_handle = (AnchorPane) event.getSource();
+            DraggableNode parent;
+
+            if ( link_handle.getParent().getParent().getParent() instanceof DraggableNode ) {
+                parent = (DraggableNode) link_handle.getParent().getParent().getParent();
+            } else {
+                System.out.println("target of node link is not found");
+                return;
+            }
+
+            ClipboardContent content = new ClipboardContent();
+
+            container.addData("target", parent.getType().toString());
+
+            content.put(DragContainer.AddLink, container);
+
+            event.getDragboard().setContent(content);
+
+            event.setDropCompleted(true);
+
+            event.consume();
+        };
+
+        mContextLinkDragOver = event -> {
+            event.acceptTransferModes(TransferMode.ANY);
+            event.consume();
+
+        };
+
+        mContextLinkDragDropped = event -> {
+
+            getParent().setOnDragOver(null);
+            getParent().setOnDragDropped(null);
+
+            event.setDropCompleted(true);
+            event.consume();
+        };
+    }
 
 }

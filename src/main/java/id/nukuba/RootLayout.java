@@ -148,6 +148,17 @@ public class RootLayout extends AnchorPane {
                     System.out.println ("Moved node " + container.getValue("type"));
             }
 
+            //AddLink drag operation
+            container = (DragContainer) event.getDragboard().getContent(DragContainer.AddLink);
+
+            if (container != null) {
+                System.out.println("after add node link "+container.getData());
+            }
+            // if there is no link dragged detected
+            else {
+                System.out.println("node link not found");
+            }
+
             event.consume();
         });
 
