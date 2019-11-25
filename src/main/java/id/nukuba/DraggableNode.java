@@ -35,6 +35,9 @@ public class DraggableNode extends AnchorPane {
     private EventHandler <DragEvent> mContextLinkDragOver;
     private EventHandler <DragEvent> mContextLinkDragDropped;
 
+    private NodeLink mDragLink = null;
+    private AnchorPane right_pane = null;
+
     private final DraggableNode self;
 
     public DraggableNode() {
@@ -65,6 +68,12 @@ public class DraggableNode extends AnchorPane {
 
         left_link_handle.setOnDragDropped(mLinkHandleDragDropped);
         right_link_handle.setOnDragDropped(mLinkHandleDragDropped);
+
+        mDragLink = new NodeLink();
+        mDragLink.setVisible(false);
+
+        parentProperty().addListener((observableValue, parent, t1) -> right_pane = (AnchorPane) getParent());
+
 
     }
 
@@ -189,6 +198,18 @@ public class DraggableNode extends AnchorPane {
             getParent().setOnDragOver(mContextLinkDragOver);
             getParent().setOnDragDropped(mLinkHandleDragDropped);
 
+            //Set up user-draggable link
+            right_pane.getChildren().add(0,mDragLink);
+
+            mDragLink.setVisible(false);
+
+            Point2D p = new Point2D(
+                    getLayoutX() + (getWidth() / 2.0),
+                    getLayoutY() + (getHeight() / 2.0)
+            );
+
+            mDragLink.setStart(p);
+
             //Drag content code
             ClipboardContent content = new ClipboardContent();
             DragContainer container = new DragContainer ();
@@ -237,6 +258,13 @@ public class DraggableNode extends AnchorPane {
 
             event.getDragboard().setContent(content);
 
+            //hide the draggable NodeLink and remove it from the right-hand AnchorPane's children
+            if ( mDragLink.isVisible() ) System.out.println("draglink dropped is visible");
+            else System.out.println("draglink dropped is not visible");
+
+            mDragLink.setVisible(false);
+            right_pane.getChildren().remove(0);
+
             event.setDropCompleted(true);
 
             event.consume();
@@ -244,6 +272,15 @@ public class DraggableNode extends AnchorPane {
 
         mContextLinkDragOver = event -> {
             event.acceptTransferModes(TransferMode.ANY);
+
+            //Relocate user-draggable link
+            if (!mDragLink.isVisible())
+                mDragLink.setVisible(true);
+
+            System.out.println("link is dragged : " + event.getX() + ", " + event.getY());
+
+            mDragLink.setEnd(new Point2D(event.getX(), event.getY()));
+
             event.consume();
 
         };
@@ -252,6 +289,13 @@ public class DraggableNode extends AnchorPane {
 
             getParent().setOnDragOver(null);
             getParent().setOnDragDropped(null);
+
+            //hide the draggable NodeLink and remove it from the right-hand AnchorPane's children
+            if ( mDragLink.isVisible() ) System.out.println("draglink dropped context is visible");
+            else System.out.println("draglink dropped context is not visible");
+
+            mDragLink.setVisible(false);
+            right_pane.getChildren().remove(0);
 
             event.setDropCompleted(true);
             event.consume();
