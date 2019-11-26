@@ -4,6 +4,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
@@ -119,6 +120,7 @@ public class RootLayout extends AnchorPane {
 
             mDragOverIcon.setVisible(false);
 
+            //add node to right pane
             DragContainer container =
                     (DragContainer) event.getDragboard().getContent(DragContainer.AddNode);
 
@@ -138,6 +140,9 @@ public class RootLayout extends AnchorPane {
                             new Point2D(cursorPoint.getX() - 32, cursorPoint.getY() - 32)
                     );
                 }
+                else {
+                    System.out.println("container value is not scene_coords but "+container.getData());
+                }
             }
 
             container =
@@ -152,7 +157,39 @@ public class RootLayout extends AnchorPane {
             container = (DragContainer) event.getDragboard().getContent(DragContainer.AddLink);
 
             if (container != null) {
-                System.out.println("after add node link "+container.getData());
+
+                //bind the ends of our link to the nodes whose id's are stored in the drag container
+                String sourceId = container.getValue("source");
+                String targetId = container.getValue("target");
+
+                if (sourceId != null && targetId != null) {
+
+                    //System.out.println(container.getData());
+                    NodeLink link = new NodeLink();
+
+                    //add our link at the top of the rendering order so it's rendered first
+                    right_pane.getChildren().add(0,link);
+
+                    DraggableNode source = null;
+                    DraggableNode target = null;
+
+                    for (Node n: right_pane.getChildren()) {
+
+                        if (n.getId() == null)
+                            continue;
+
+                        if (n.getId().equals(sourceId))
+                            source = (DraggableNode) n;
+
+                        if (n.getId().equals(targetId))
+                            target = (DraggableNode) n;
+
+                    }
+
+                    if (source != null && target != null)
+                        link.bindEnds(source, target);
+                }
+
             }
             // if there is no link dragged detected
             else {

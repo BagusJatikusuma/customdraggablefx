@@ -12,6 +12,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class DraggableNode extends AnchorPane {
 
@@ -74,6 +75,8 @@ public class DraggableNode extends AnchorPane {
 
         parentProperty().addListener((observableValue, parent, t1) -> right_pane = (AnchorPane) getParent());
 
+        //provide a universally unique identifier for this object
+        setId(UUID.randomUUID().toString());
 
     }
 
@@ -217,7 +220,7 @@ public class DraggableNode extends AnchorPane {
             AnchorPane link_handle = (AnchorPane) event.getSource();
             DraggableNode parent = (DraggableNode) link_handle.getParent().getParent().getParent();
 
-            container.addData("source", parent.getType().toString());
+            container.addData("source", getId());
 
             content.put(DragContainer.AddLink, container);
 
@@ -252,7 +255,7 @@ public class DraggableNode extends AnchorPane {
 
             ClipboardContent content = new ClipboardContent();
 
-            container.addData("target", parent.getType().toString());
+            container.addData("target", getId());
 
             content.put(DragContainer.AddLink, container);
 
